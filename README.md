@@ -1,93 +1,129 @@
-# foru-harness-template
+# zexo-harness-template
 
-**A Claude Code + ECC + RTK development harness for Foru-Engineering sprints.**
+**A best-in-world personal harness for Claude Code development.** Fork it, run one command, and get a battle-tested `.claude/` setup — subagents, slash commands, MCP servers, hooks, memory scaffolding, code-review gates, and CI — all pre-wired.
 
-This repo is a **template**. Clone it (or "Use this template" on GitHub) at the start of every new sprint. Everything Claude Code needs to be productive from minute one is pre-wired here — subagents, slash commands, MCP servers, hooks, memory scaffolding, code-review rules, git conventions, and CI.
-
-Team members do **not** need to configure any of this themselves. Just clone, run `./setup.sh`, and go.
+Built + maintained by [@zexoverz](https://github.com/zexoverz). Free to use, fork, and adapt.
 
 ---
 
-## Why this exists
+## Why
 
-Every FORU sprint eats hours on the same setup dance: writing a CLAUDE.md, picking subagents, wiring hooks, remembering which MCP servers to enable, arguing about lint config, forgetting to install RTK. That setup dance eats sprint velocity — especially when the sprint is short (Coinfest demo: 3 weeks, deadline **7 Aug 2026**).
+Every new repo eats the same setup dance — draft a CLAUDE.md, pick subagents, remember which hooks catch which bugs, wire MCP servers, argue about lint, forget to install RTK. That dance eats 2–4 hours per repo. For a team, it multiplies.
 
-This template collapses the setup dance into `./setup.sh`. Every sprint starts from the same battle-tested baseline. Improvements to the baseline flow back here so the next sprint starts even faster.
+This template collapses the dance into `./setup.sh`. Every repo starts from the same battle-tested baseline. Improvements to the baseline flow back here.
 
-## What you get on day one
+## What's inside
 
-| Layer                | What                                                                                         |
-| -------------------- | -------------------------------------------------------------------------------------------- |
-| **ECC**              | Full Everything-Claude-Code rules from `~/.claude/rules/ecc/` — coding style, testing, security, git, patterns, code review, agents |
-| **RTK**              | Rust Token Killer pre-wired as PreToolUse Bash hook (60–90% token savings on dev commands)   |
-| **5 subagents**      | `planner`, `code-reviewer`, `tdd-guide`, `security-reviewer`, `build-error-resolver`         |
-| **5 slash commands** | `/ship`, `/work-on`, `/review`, `/deploy`, `/adr`                                            |
-| **MCP servers**      | Context7 (fresh docs), GitHub, Playwright — auto-loaded via `.mcp.json`. GCP via `gcloud` CLI + gcloud MCP if enabled. |
-| **Hooks**            | PostToolUse lint/fmt on edit, Stop-hook full verify at session end                           |
-| **AGENTS.md**        | Cross-tool rules (Cursor / Cline / Windsurf compat) — bring your own IDE                     |
-| **Memory scaffold**  | Pre-seeded FORU-org context so subagents know who they are                                   |
-| **CI**               | GitHub Actions runs `bun run verify` on every PR                                             |
-| **ADR template**     | For logging decisions like "Hermes vs OpenClaw"                                              |
+| Layer                 | Contents                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| **6 subagents**       | `planner` · `code-reviewer` · `security-reviewer` · `tdd-guide` · `critic` (adversarial) · `build-error-resolver` |
+| **9 slash commands**  | `/work-on` · `/ship` · `/review` · `/verify-adversarial` · `/loop` · `/swarm` · `/deploy` · `/adr` · `/prune-claude-md` |
+| **Hooks**             | RTK PreToolUse (60–90% token savings) · PostToolUse lint on Edit/Write · Stop-hook `bun run verify` · Notification hook (Slack/push on `agent_completed`) |
+| **MCP servers**       | Context7 (fresh docs), GitHub, Playwright, Chrome DevTools (2026 hit — live browser control) — via `.mcp.json`, auto-loaded |
+| **Cross-tool rules**  | `AGENTS.md` for Cursor / Cline / Windsurf compat                                                    |
+| **Memory scaffold**   | `.claude/memory/MEMORY.md` — auto-memory index seeded ready                                         |
+| **Session-start doc** | `CLAUDE.md` — the file Claude reads before every turn                                               |
+| **Onboarding**        | `docs/ONBOARDING.md` — first-hour walkthrough                                                       |
+| **Recipes**           | `docs/AGENT-RECIPES.md` — 10 copy-paste prompts for common moves                                    |
+| **ADR template**      | `docs/ADR/` with template + numbering convention                                                    |
+| **CI**                | GitHub Actions running `bun run verify` on every PR                                                 |
+| **Plugin bundle**     | `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` — installable via `/plugin install` |
 
 ## Quickstart
 
+### Option A — GitHub template (recommended)
+
 ```bash
-# 1. Use as GitHub template OR clone
-gh repo create Foru-Engineering/my-sprint --template Foru-Engineering/foru-harness-template --private
-cd my-sprint
-
-# 2. Bootstrap
+gh repo create <owner>/<my-new-project> --template zexoverz/zexo-harness-template --private
+cd <my-new-project>
 ./setup.sh
+```
 
-# 3. Open Claude Code
-claude
+### Option B — direct clone
 
-# 4. Start work
-> /work-on "add fake-catalog seeds for savings wedge"
+```bash
+git clone https://github.com/zexoverz/zexo-harness-template.git my-new-project
+cd my-new-project
+rm -rf .git && git init -b main
+./setup.sh
+```
+
+### Option C — install as a plugin (into any repo)
+
+```bash
+# Inside Claude Code, once registered as a marketplace
+/plugin install zexo-harness@zexoverz/zexo-harness-template
 ```
 
 `setup.sh` verifies:
 
-- RTK installed (`rtk --version`) — installs from https://github.com/rtk-ai/rtk if missing
-- `gh` authenticated + Foru-Engineering org membership
-- Bun installed (or Node LTS if Bun not preferred)
-- ECC rules linked (from `~/.claude/rules/ecc/`)
-- `.env` created from `.env.example`
+- **Bun** installed (installs if missing)
+- **RTK** installed from https://github.com/rtk-ai/rtk
+- **gh** authenticated
+- **gcloud** installed (only if you'll deploy to GCP)
+- **ECC rules** present at `~/.claude/rules/ecc/`
+- **`.env`** created from `.env.example`
 
-## Sprint context
+## The 6 subagents
 
-If you're picking this up for **Coinfest Asia 2026 demo** ("Project Zero" MVP), read [`docs/SPRINT-COINFEST-2026.md`](./docs/SPRINT-COINFEST-2026.md) first — it has the demo spec, the wedge structure, the fake-catalog convention, and the Hermes-vs-OpenClaw ADR.
+| Subagent               | When to invoke                                                              |
+| ---------------------- | --------------------------------------------------------------------------- |
+| `planner`              | Before any non-trivial feature. No code without a plan.                     |
+| `tdd-guide`            | While implementing. Enforces test-first, 80% coverage.                      |
+| `code-reviewer`        | After writing code. Quality, style, error handling, immutability.           |
+| `security-reviewer`    | Touching auth / input / DB / secrets / crypto. OWASP-focused.               |
+| `critic` (**new**)     | Adversarial reviewer. Reads spec + diff, tries to find why it's wrong. Cheapest quality jump for compliance-critical code. |
+| `build-error-resolver` | CI or `bun run verify` failing. Reads error output, applies minimal fix. Never disables the check. |
 
-## Onboarding
+## The 9 slash commands
 
-Fresh team member? [`docs/ONBOARDING.md`](./docs/ONBOARDING.md) walks through:
+| Command                | Purpose                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| `/work-on <task>`      | Full feature pipeline: plan → TDD → parallel review → ready to ship                  |
+| `/ship`                | Verify + commit + push + PR                                                          |
+| `/review`              | Parallel `code-reviewer` + `security-reviewer` over current diff                     |
+| `/verify-adversarial`  | Builder/critic separation — fresh session verifies the diff against the spec         |
+| `/loop`                | Ralph loop — burn down a backlog file until DONE criteria hit                        |
+| `/swarm`               | Fan out N independent tasks to worktree-isolated subagents in parallel               |
+| `/deploy`              | Pre-flight checks + deploy to configured cloud (GCP / Vercel / Fly)                  |
+| `/adr <topic>`         | Scaffold new Architectural Decision Record                                           |
+| `/prune-claude-md`     | Enforce 200-line CLAUDE.md ceiling — move enforceable rules to hooks                 |
 
-- What Claude Code + ECC + RTK actually give you
-- How to use the 5 subagents effectively
-- When to use each slash command
-- How to add a new subagent / skill / hook
-- The FORU git-commit convention
+## What makes this best-in-world (mid-2026)
 
-## Recipes
+Grounded in field research (see [`docs/RESEARCH-NOTES.md`](./docs/RESEARCH-NOTES.md) for citations):
 
-Common Claude Code moves — copy-paste prompts, when to use them, what to expect:
-[`docs/AGENT-RECIPES.md`](./docs/AGENT-RECIPES.md)
+1. **Plugin-format distribution** — the 2026 standard, installable via one command.
+2. **Builder/critic separation** — a fresh-context adversary catches what the builder rationalized past.
+3. **Ralph-loop native support** — long-running verifiable backlogs burn down autonomously against `bun run verify`.
+4. **Worktree-parallel swarms** — N independent tasks run in isolated worktrees, each opens a draft PR.
+5. **Notification hooks wired** — background agents ping you when they finish. No more polling.
+6. **Sandbox-credentials hardening** — free security default that most templates skip.
+7. **Subdirectory CLAUDE.md convention** — scoped guidance beats a monolithic 500-line CLAUDE.md.
+8. **RTK + minimal MCP** — 60-90% token compression, 3-4 servers not 15. The field converged on "less is more."
+9. **Cross-tool AGENTS.md** — same rules whether you use Claude Code, Cursor, Cline, or Windsurf.
+10. **ECC upstream** — inherits [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) v2, selectively.
 
-## Sprint log
+## Not for you if
 
-Every sprint appends to [`LOG.md`](./LOG.md) — one line per session: what shipped, what's next. Not a diary, a rolling changelog for handoffs.
+- You want a kitchen-sink 100+ subagent zoo (fights context, hurts more than helps)
+- You dislike opinionated defaults (this is opinionated — Bun, oxlint/oxfmt, Drizzle, TDD-first)
+- You need a language other than TypeScript out of the box (adapt `setup.sh` — everything else is language-agnostic)
 
----
+## Contributing
 
-## For tech leads (Faisal): how to fork this for a new sprint
+Learned something during a project that would help future projects? Open a PR. Improvements compound.
 
-1. **Create a repo** from this template in `Foru-Engineering/` (private by default).
-2. **Edit `CLAUDE.md`** — replace the "sprint scope" section with the specific sprint's goals.
-3. **Edit `docs/SPRINT-*.md`** — copy the Coinfest template as a starting shape.
-4. **Optionally edit `.claude/memory/MEMORY.md`** — seed with sprint-specific facts.
-5. **Invite team members** — Naufal, Toriq, Ariq (or whoever's on the sprint).
-6. **Hand off.** They run `./setup.sh` and start.
+**Bug reports and feature ideas:** [GitHub Issues](https://github.com/zexoverz/zexo-harness-template/issues)
 
-## Contributing back to the template
+## Credits
 
-If you learn something during a sprint that would help future sprints — a new subagent, a better skill, a hook that catches a common mistake — open a PR against `foru-harness-template` (not just your sprint repo). Improvements compound across sprints.
+- **[Everything Claude Code](https://github.com/affaan-m/everything-claude-code)** — the rules foundation
+- **[Rust Token Killer](https://github.com/rtk-ai/rtk)** — the token compression that makes this affordable
+- **[Anthropic Claude Code](https://code.claude.com/)** — the harness this is built for
+- **[obra/superpowers](https://github.com/obra/superpowers)** — skills-as-methodology inspiration
+- **[ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp)** — the MCP that fixed frontend agent blindness
+
+## License
+
+MIT. Use it, fork it, adapt it. Credit appreciated but not required.

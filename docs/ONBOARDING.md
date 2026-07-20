@@ -1,6 +1,6 @@
-# Onboarding — first hour with foru-harness-template
+# Onboarding — first hour with zexo-harness-template
 
-Welcome to the team. This walks you through your first hour with the harness. After this you'll know how to use Claude Code + ECC + RTK effectively.
+This walks you through your first hour with the harness. After this you'll know how to use Claude Code + ECC + RTK effectively.
 
 ## Prerequisites
 
@@ -13,8 +13,16 @@ Welcome to the team. This walks you through your first hour with the harness. Af
 ## Step 1 — clone + bootstrap
 
 ```bash
-git clone https://github.com/Foru-Engineering/<sprint-name> ~/code/<sprint-name>
-cd ~/code/<sprint-name>
+gh repo create <owner>/<my-new-project> --template zexoverz/zexo-harness-template --private
+cd <my-new-project>
+./setup.sh
+```
+
+Or, if you already have a repo:
+
+```bash
+git clone https://github.com/<owner>/<my-new-project>.git
+cd <my-new-project>
 ./setup.sh
 ```
 
@@ -26,12 +34,12 @@ RTK compresses 60-90% of Bash output before Claude sees it. Test:
 
 ```bash
 rtk --version
-# Expected: rtk 0.43.x
+# Expected: rtk 0.43.x or higher
 rtk gain
 # Expected: shows token-savings analytics (works even before you've used it)
 ```
 
-If `rtk gain` errors with "command not found," you likely have the WRONG rtk binary (`reachingforthejack/rtk` = Rust Type Kit). Uninstall it and reinstall from https://github.com/rtk-ai/rtk.
+If `rtk gain` errors with "command not found," you likely have the WRONG rtk binary (there's a `reachingforthejack/rtk` = Rust Type Kit that collides on the name). Uninstall it and reinstall from https://github.com/rtk-ai/rtk.
 
 ## Step 3 — verify ECC
 
@@ -42,7 +50,7 @@ ls ~/.claude/rules/ecc/common/
 # Expected: agents.md coding-style.md code-review.md ... testing.md
 ```
 
-If missing, ask Faisal for the ECC bundle.
+If missing, install from https://github.com/affaan-m/everything-claude-code.
 
 ## Step 4 — open Claude Code
 
@@ -53,18 +61,18 @@ claude
 Try:
 
 ```
-> what's on the sprint plan?
+> what's the project scope?
 ```
 
-Claude reads `CLAUDE.md` + `docs/SPRINT-*.md` automatically. It should tell you the sprint goals + deadline.
+Claude reads `CLAUDE.md` automatically. It should tell you the project goals.
 
 ## Step 5 — use a slash command
 
-Try `/adr agent-runtime-choice` — this scaffolds a new ADR. Confirm the file appears in `docs/ADR/`.
+Try `/adr example-decision` — this scaffolds a new ADR. Confirm the file appears in `docs/ADR/`.
 
 ## Step 6 — use a subagent
 
-Try a work-on command. Give a small task like "add a hello-world Elysia endpoint":
+Try a work-on command. Give a small task like "add a hello-world endpoint":
 
 ```
 > /work-on "add a hello-world endpoint at /hello returning JSON { message: 'halo' }"
@@ -87,13 +95,12 @@ Try `/ship` — verifies, commits, pushes, opens a PR.
 > list available MCP tools
 ```
 
-Expected: tools prefixed with `mcp__context7__`, `mcp__github__`, `mcp__playwright__`, `mcp__railway__`.
+Expected: tools prefixed with `mcp__context7__`, `mcp__github__`, `mcp__playwright__`, `mcp__chrome-devtools__`.
 
 Set the required env vars in `.env`:
 
 - `GITHUB_TOKEN` — a PAT with `repo` + `read:org` scope (create at https://github.com/settings/tokens)
-- `GCP_PROJECT_ID` + `GCP_REGION` — set to Foru-Engineering GCP project. Ask Faisal for the project ID.
-- `gcloud auth application-default login` — one-time browser auth so `/deploy` can push to Cloud Run
+- Cloud target (only if you'll deploy): `GCP_PROJECT_ID` + `GCP_REGION`, OR `VERCEL_TOKEN`, OR `FLY_API_TOKEN`
 
 ## What each subagent is for
 
@@ -103,27 +110,32 @@ Set the required env vars in `.env`:
 | `tdd-guide`            | Writing a feature — tests first                                                      |
 | `code-reviewer`        | After writing / modifying code — general quality                                     |
 | `security-reviewer`    | Touching auth / user input / DB / secrets — parallel with code-reviewer via `/review` |
+| `critic`               | Adversarial review — fresh session, tries to break the diff. Use for high-stakes code. |
 | `build-error-resolver` | `bun run verify` fails, CI is red — reads error output, fixes root cause             |
 
 ## What each skill (slash command) is for
 
-| Skill      | When to use                                                              |
-| ---------- | ------------------------------------------------------------------------ |
-| `/work-on` | Any non-trivial task — plans → TDD → reviews                             |
-| `/ship`    | Feature done, ready for PR                                               |
-| `/review`  | Standalone review pass (parallel code + security)                        |
-| `/deploy`  | Push to Railway — pre-flight checks + smoke test                         |
-| `/adr`     | Log a technical decision — Hermes vs OpenClaw, WhatsApp vs Telegram, etc |
+| Skill                   | When to use                                                              |
+| ----------------------- | ------------------------------------------------------------------------ |
+| `/work-on`              | Any non-trivial task — plans → TDD → reviews                             |
+| `/ship`                 | Feature done, ready for PR                                               |
+| `/review`               | Standalone review pass (parallel code + security)                        |
+| `/verify-adversarial`   | After `/review` passes — adversarial critic on the diff                  |
+| `/loop <goal-file>`     | Autonomous burndown of a backlog checklist                               |
+| `/swarm <task-list>`    | Fan out N independent tasks to worktree-isolated subagents               |
+| `/deploy`               | Push to GCP / Vercel / Fly — pre-flight checks + smoke test              |
+| `/adr <topic>`          | Log a technical decision                                                 |
+| `/prune-claude-md`      | Diagnose + fix CLAUDE.md bloat                                           |
 
 ## Do this / don't do this
 
 **Do:**
 - Ask `planner` before touching more than 2 files
 - Run `/review` before every `/ship`
-- Write an ADR for every architectural choice (why this DB, why this framework)
+- Run `/verify-adversarial` for anything auth / payment / security-sensitive
+- Write an ADR for every architectural choice
 - Keep commits small — one behavior per commit
 - Read `CLAUDE.md` before starting a new session
-- Contribute back improvements to `foru-harness-template` (not just to your sprint repo)
 
 **Don't:**
 - Skip `bun run verify` before committing
@@ -135,8 +147,7 @@ Set the required env vars in `.env`:
 
 ## Getting help
 
-- **Faisal (tech lead)** — architecture / process / stuck-more-than-2-hours
-- **Arief (advisor)** — big-picture direction only
-- **Team channel** — daily blockers, PR reviews
-
-Ask early. A 30-min question saves a 3-hour rabbit hole.
+- **Issues in the template itself:** https://github.com/zexoverz/zexo-harness-template/issues
+- **Claude Code docs:** https://code.claude.com/docs
+- **ECC (rules foundation):** https://github.com/affaan-m/everything-claude-code
+- **RTK (token compression):** https://github.com/rtk-ai/rtk

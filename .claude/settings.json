@@ -22,6 +22,17 @@
         ]
       }
     ],
+    "Notification": [
+      {
+        "matcher": "agent_completed|agent_needs_input",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/notify-when-done.sh"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
@@ -43,12 +54,20 @@
       "Bash(git *)",
       "Bash(rtk *)",
       "Bash(gcloud *)",
+      "Bash(vercel *)",
+      "Bash(fly *)",
       "Bash(mkdir *)",
       "Bash(ls *)",
-      "Bash(cat *)",
       "Bash(grep *)",
-      "Bash(find *)"
+      "Bash(find *)",
+      "Agent(model:sonnet)",
+      "Agent(model:haiku)"
     ]
+  },
+  "sandbox": {
+    "credentials": {
+      "block": [".env", ".env.*", "*.pem", "*.key", "id_rsa", "id_ed25519"]
+    }
   },
   "enabledPlugins": {
     "playwright@claude-plugins-official": true,

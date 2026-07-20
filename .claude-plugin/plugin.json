@@ -1,0 +1,60 @@
+{
+  "name": "zexo-harness",
+  "version": "0.1.0",
+  "description": "Best-in-world personal harness for Claude Code — subagents, skills, hooks, MCP servers all pre-wired. Field-researched (mid-2026).",
+  "author": {
+    "name": "Faisal Firdani",
+    "email": "faisalfirdani01@gmail.com",
+    "url": "https://github.com/zexoverz"
+  },
+  "homepage": "https://github.com/zexoverz/zexo-harness-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zexoverz/zexo-harness-template"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "harness",
+    "template",
+    "subagents",
+    "skills",
+    "mcp",
+    "hooks",
+    "ecc",
+    "rtk"
+  ],
+  "contents": {
+    "agents": [
+      "planner",
+      "code-reviewer",
+      "security-reviewer",
+      "tdd-guide",
+      "critic",
+      "build-error-resolver"
+    ],
+    "skills": [
+      "work-on",
+      "ship",
+      "review",
+      "verify-adversarial",
+      "loop",
+      "swarm",
+      "deploy",
+      "adr",
+      "prune-claude-md"
+    ],
+    "hooks": [
+      "post-edit-lint",
+      "notify-when-done"
+    ]
+  },
+  "requires": {
+    "claude-code": ">=2.1.180",
+    "external-tools": [
+      "bun",
+      "gh",
+      "rtk (https://github.com/rtk-ai/rtk)"
+    ]
+  }
+}

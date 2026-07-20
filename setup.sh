@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # =====================================================
-# foru-harness-template — bootstrap script
-# One-command environment check + setup for team members.
+# zexo-harness-template — bootstrap script
+# One-command environment check + setup.
 # =====================================================
 
 set -euo pipefail
 
-# Colors
 r=$'\033[31m'; g=$'\033[32m'; y=$'\033[33m'; b=$'\033[34m'; d=$'\033[0m'
 ok()   { echo "${g}✓${d} $1"; }
 warn() { echo "${y}⚠${d} $1"; }
@@ -14,11 +13,11 @@ err()  { echo "${r}✗${d} $1"; exit 1; }
 info() { echo "${b}→${d} $1"; }
 
 echo ""
-info "foru-harness-template setup"
+info "zexo-harness-template setup"
 echo ""
 
 # ------------------------------------------------------
-# 1. Bun
+# Bun
 # ------------------------------------------------------
 if command -v bun >/dev/null 2>&1; then
   ok "bun $(bun --version)"
@@ -31,40 +30,31 @@ else
 fi
 
 # ------------------------------------------------------
-# 2. RTK (Rust Token Killer)
+# RTK (Rust Token Killer) — https://github.com/rtk-ai/rtk
 # ------------------------------------------------------
 if command -v rtk >/dev/null 2>&1; then
-  # Verify it's the right RTK (not reachingforthejack/rtk name collision)
   if rtk gain --help >/dev/null 2>&1; then
     ok "rtk $(rtk --version 2>&1 | head -1)"
   else
-    warn "wrong 'rtk' binary in PATH — expected rtk-ai/rtk, got something else"
-    warn "  → uninstall the other 'rtk', then reinstall from https://github.com/rtk-ai/rtk"
+    warn "wrong 'rtk' binary in PATH — expected rtk-ai/rtk"
+    warn "  → uninstall the other 'rtk', reinstall from https://github.com/rtk-ai/rtk"
   fi
 else
-  warn "rtk not found — installing from https://github.com/rtk-ai/rtk"
-  # RTK installer (adjust if the canonical install method changes)
+  warn "rtk not found — see install instructions at https://github.com/rtk-ai/rtk"
   if command -v cargo >/dev/null 2>&1; then
-    cargo install rtk-cli || err "cargo install rtk-cli failed"
-    ok "rtk installed via cargo"
+    info "  cargo detected — try: cargo install rtk-cli"
   else
-    err "rtk requires cargo (Rust). Install Rust first: https://rustup.rs"
+    info "  cargo required — install Rust first: https://rustup.rs"
   fi
 fi
 
 # ------------------------------------------------------
-# 3. GitHub CLI
+# GitHub CLI
 # ------------------------------------------------------
 if command -v gh >/dev/null 2>&1; then
   if gh auth status >/dev/null 2>&1; then
     login=$(gh api /user --jq .login)
     ok "gh authenticated as ${login}"
-    # Check Foru-Engineering org membership
-    if gh api /orgs/Foru-Engineering/members/${login} >/dev/null 2>&1; then
-      ok "  member of Foru-Engineering ✓"
-    else
-      warn "  not a member of Foru-Engineering — ask Faisal to invite you"
-    fi
   else
     warn "gh installed but not authenticated — run: gh auth login"
   fi
@@ -73,30 +63,30 @@ else
 fi
 
 # ------------------------------------------------------
-# 4. gcloud CLI (GCP deploy target)
+# gcloud (optional — only if deploying to GCP)
 # ------------------------------------------------------
 if command -v gcloud >/dev/null 2>&1; then
   if gcloud auth application-default print-access-token >/dev/null 2>&1; then
     ok "gcloud authenticated (ADC)"
   else
-    warn "gcloud installed but no application-default creds — run: gcloud auth application-default login"
+    warn "gcloud installed but no ADC — run: gcloud auth application-default login (only needed for GCP deploy)"
   fi
 else
-  warn "gcloud not found — install: brew install --cask google-cloud-sdk (macOS) or https://cloud.google.com/sdk/docs/install"
+  info "gcloud not found — install if you'll deploy to GCP: brew install --cask google-cloud-sdk"
 fi
 
 # ------------------------------------------------------
-# 5. ECC (Everything Claude Code) rules
+# ECC (Everything Claude Code) rules
 # ------------------------------------------------------
 if [[ -d "${HOME}/.claude/rules/ecc" ]]; then
   ok "ECC rules present at ~/.claude/rules/ecc/"
 else
   warn "ECC rules not found at ~/.claude/rules/ecc/"
-  warn "  ask Faisal for the ECC bundle, then extract to ~/.claude/rules/ecc/"
+  warn "  install ECC from: https://github.com/affaan-m/everything-claude-code"
 fi
 
 # ------------------------------------------------------
-# 5. .env
+# .env
 # ------------------------------------------------------
 if [[ ! -f .env ]]; then
   cp .env.example .env
@@ -106,30 +96,28 @@ else
 fi
 
 # ------------------------------------------------------
-# 6. Post-edit hook
+# Hooks executable
 # ------------------------------------------------------
-if [[ -f .claude/hooks/post-edit-lint.sh ]]; then
-  chmod +x .claude/hooks/post-edit-lint.sh
-  ok "post-edit hook executable"
-fi
+find .claude/hooks -type f -name "*.sh" -exec chmod +x {} \;
+ok "hooks made executable"
 
 # ------------------------------------------------------
-# 7. Bun install (if package.json exists)
+# Bun install (if package.json exists)
 # ------------------------------------------------------
 if [[ -f package.json ]]; then
   info "running bun install..."
   bun install
   ok "dependencies installed"
 else
-  warn "no package.json yet — run 'bun init' when ready to start coding"
+  info "no package.json yet — run 'bun init' when ready to start coding"
 fi
 
 echo ""
 ok "setup complete"
 echo ""
 info "next steps:"
-echo "  1. fill in .env"
-echo "  2. read README.md + docs/ONBOARDING.md"
+echo "  1. fill in .env with real API keys"
+echo "  2. read CLAUDE.md + docs/ONBOARDING.md"
 echo "  3. open Claude Code: claude"
 echo "  4. try: /work-on \"your first task\""
 echo ""

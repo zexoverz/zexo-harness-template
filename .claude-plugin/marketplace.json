@@ -1,0 +1,13 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "zexoverz",
+  "description": "Personal Claude Code plugin marketplace by @zexoverz",
+  "owner": "https://github.com/zexoverz",
+  "plugins": [
+    {
+      "name": "zexo-harness",
+      "path": ".",
+      "description": "Best-in-world personal harness — subagents, skills, hooks, MCP servers pre-wired"
+    }
+  ]
+}

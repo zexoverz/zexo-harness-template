@@ -1,74 +1,91 @@
-# CLAUDE.md — Sprint context
+# CLAUDE.md
 
 **Read this on every session start.** This file is auto-loaded into Claude Code's context per turn.
 
-## What this sprint is
+Keep this file under **200 lines**. If it grows past that, run `/prune-claude-md` — move enforceable rules into hooks, scoped guidance into subdirectory `CLAUDE.md` files.
 
-**Replace this section per sprint.** Placeholder shape:
+## Project scope
 
-- **Codename:** `[SPRINT-CODENAME]` (e.g., `project-zero-coinfest`)
-- **Deadline:** `[YYYY-MM-DD]`
-- **Deliverable:** `[one-sentence goal]`
-- **Success criteria:** `[demo/video/PR/deploy — what proves done]`
-- **Compliance posture:** `[strict / lite / demo-only]`
+**Replace this section per project.** Placeholder shape:
 
-## Who this is for
-
-- **Tech lead:** Faisal (`@zexoverz`)
-- **Members:** Naufal (`@naufalputra1008`), Toriq (`@toriqahmads`), Ariq (`@AriqUntukmu`)
-- **Advisors:** Arief (`@ariefclawford`), Kai (`@kaiipang`)
+- **Codename:** `[PROJECT-CODENAME]`
+- **Purpose:** `[one-sentence goal]`
+- **Deadline:** `[YYYY-MM-DD or "no fixed deadline"]`
+- **Success criteria:** `[what proves done — deploy, video, PR, benchmark, etc.]`
+- **Non-goals:** `[what this project is deliberately NOT doing]`
 
 ## Repo conventions
 
-- **Package manager:** Bun (fallback: pnpm if a lib demands it). Never mix.
-- **Runtime:** Bun for backend services; Node LTS if a lib forces it.
-- **Lint / format:** `oxlint` + `oxfmt` (via `bun run verify`). No ESLint / Prettier unless the file lives inside a nested tool that already ships them.
-- **Test:** `bun test` for unit, Playwright for E2E.
-- **Verify command:** `bun run verify` runs typecheck + lint + fmt:check. Must pass before every commit.
-- **Commit message format:** conventional commits — `<type>: <description>` where type ∈ `feat|fix|refactor|docs|test|chore|perf|ci`.
-- **PR title:** short (< 70 chars). Details go in the body.
+Assumes Bun + TypeScript. Adapt to your stack per project.
+
+- **Package manager:** Bun. Never mix with npm/pnpm.
+- **Lint / format:** `oxlint` + `oxfmt` via `bun run verify`.
+- **Test:** `bun test` for unit, Playwright for E2E, real DB for integration (never mocked).
+- **Verify command:** `bun run verify` — typecheck + lint + fmt:check. Must pass before every commit.
+- **Commit format:** conventional commits — `<type>: <description>` (type ∈ feat|fix|refactor|docs|test|chore|perf|ci).
+- **Branch flow:** feature branches → PR → main. Never push directly to main.
 
 ## Harness architecture
 
-The `.claude/` directory in this repo is your Claude Code cockpit:
+`.claude/` is your Claude Code cockpit:
 
-| Path                  | What                                                                                       |
-| --------------------- | ------------------------------------------------------------------------------------------ |
-| `.claude/settings.json`     | Hooks (RTK PreToolUse, post-edit lint, Stop verify), model + effort defaults        |
-| `.claude/agents/*.md`       | 5 subagents — `planner`, `code-reviewer`, `tdd-guide`, `security-reviewer`, `build-error-resolver` |
-| `.claude/skills/*.md`       | 5 slash commands — `/ship`, `/work-on`, `/review`, `/deploy`, `/adr`                       |
-| `.claude/hooks/*.sh`        | Optional hook scripts                                                                      |
-| `.claude/memory/MEMORY.md`  | Cross-session memory index                                                                 |
-| `.mcp.json`                 | Pre-configured MCP servers (checked in, auto-loaded)                                       |
-
-## ECC + RTK
-
-Two global systems always active:
-
-- **ECC (Everything Claude Code)** — rules from `~/.claude/rules/ecc/` — coding style, testing (80% coverage), git workflow, security checklist, code review standards, agent orchestration. Applies to every session.
-- **RTK (Rust Token Killer)** — CLI proxy that compresses 60–90% of dev-command output. Hooked in via `.claude/settings.json` → `PreToolUse.Bash`. Zero config for you.
-
-See [`docs/ONBOARDING.md`](./docs/ONBOARDING.md) for a deeper dive.
+| Path                            | What                                                                       |
+| ------------------------------- | -------------------------------------------------------------------------- |
+| `.claude/settings.json`         | Hooks (RTK, lint, verify, notifications), model + effort, sandbox creds    |
+| `.claude/agents/*.md`           | 6 subagents (planner, code-reviewer, security-reviewer, tdd-guide, critic, build-error-resolver) |
+| `.claude/skills/*.md`           | 9 slash commands (/work-on, /ship, /review, /verify-adversarial, /loop, /swarm, /deploy, /adr, /prune-claude-md) |
+| `.claude/hooks/*.sh`            | Hook scripts (post-edit-lint, notify-when-done)                            |
+| `.claude/memory/MEMORY.md`      | Cross-session memory index — auto-maintained                              |
+| `.claude-plugin/plugin.json`    | Plugin metadata (installable via `/plugin install`)                        |
+| `.mcp.json`                     | Pre-configured MCP servers (Context7, GitHub, Playwright, Chrome DevTools) |
 
 ## Non-negotiables
 
-1. **Never commit secrets.** `.env` is gitignored. Anthropic keys, Hermes tokens, WhatsApp API keys all live in `.env` locally.
-2. **Never skip hooks.** Do not pass `--no-verify` to git. If a hook fails, fix the underlying issue.
-3. **Never `git push --force` to `main`.** Feature branches only.
-4. **Always run `bun run verify` before declaring work done.** The PostToolUse hook runs per-file lint; verify catches cross-file issues the per-file hook misses.
-5. **Every architectural decision → ADR.** Use `/adr` to scaffold. Especially: which agent runtime (Hermes vs OpenClaw), which chat channel first (WhatsApp vs Telegram), how to handle fake catalog data.
+1. **Never commit secrets.** `.env` is gitignored. API keys live in `.env` locally.
+2. **Never skip hooks.** No `--no-verify` on git.
+3. **Never `git push --force` to `main`** or protected branches.
+4. **Always run `bun run verify` before declaring work done.** Per-file hooks catch per-file issues; verify catches cross-file.
+5. **Every architectural decision → ADR.** Use `/adr` to scaffold.
+6. **Verify facts before recommending.** Memory is a starting hypothesis, not truth. Grep / read current code before acting on remembered facts.
+7. **CLAUDE.md is a contract with future you.** If a rule here is being violated regularly, fix the rule (or the hook) — don't just re-remind yourself.
 
-## Working with the subagents
+## Subagents — when to use each
 
-- **Complex new feature or refactor?** Ask `planner` first. Don't dive into code without a plan.
-- **After writing code?** Run `/review` — spawns `code-reviewer` + `security-reviewer` in parallel.
-- **Writing tests?** Use `tdd-guide` — enforces write-tests-first.
-- **Build broken?** Use `build-error-resolver` — reads error output, fixes incrementally.
+- **`planner`** — before any feature that touches > 2 files or > 30min of work. No code without a plan.
+- **`tdd-guide`** — while implementing. Tests first (RED), implementation (GREEN), refactor (IMPROVE), verify 80%+ coverage.
+- **`code-reviewer`** — after every non-trivial edit. General quality, style, error handling.
+- **`security-reviewer`** — anything touching auth / user input / DB / secrets / crypto / payments.
+- **`critic`** — adversarial reviewer. Give it the spec + the diff, ask "why is this wrong?" Especially valuable for compliance-critical code.
+- **`build-error-resolver`** — `bun run verify` or CI failing. Reads errors, fixes root cause, never disables the check.
 
-## Working with slash commands
+## Slash commands — when to use each
 
-- **`/work-on <task>`** — plan first (planner agent), then TDD (tdd-guide agent), then review.
-- **`/ship`** — verify, commit, push, open PR. Includes the CI green check.
-- **`/review`** — parallel code + security review of current diff.
-- **`/deploy`** — Railway deploy with pre-flight checks.
-- **`/adr <topic>`** — scaffold a new Architectural Decision Record in `docs/ADR/`.
+- **`/work-on <task>`** — full pipeline (plan → TDD → parallel review). Use for anything non-trivial.
+- **`/ship`** — feature done, ready for PR. Verify + commit + push + open PR.
+- **`/review`** — standalone parallel review of current diff.
+- **`/verify-adversarial`** — after `/review` passes, do the adversarial pass. Fresh session, builder-critic separation.
+- **`/loop <goal-file>`** — Ralph loop. Burn down a backlog file until `bun run verify` passes on every item.
+- **`/swarm <task-list>`** — fan out N independent tasks to worktree-isolated subagents. Each opens a draft PR.
+- **`/deploy`** — deploy to configured cloud. Pre-flight checks. Refuses on dirty tree / red CI / missing env.
+- **`/adr <topic>`** — scaffold an ADR.
+- **`/prune-claude-md`** — enforce 200-line CLAUDE.md ceiling. Moves rules to hooks, scoped guidance to subdirs.
+
+## What NOT to do
+
+- **Don't add error handling for scenarios that can't happen.** Trust internal code + framework guarantees. Only validate at boundaries.
+- **Don't create documentation files** (`*.md`, README) unless explicitly asked.
+- **Don't add features / abstractions / helpers** beyond what the task requires. No speculative generality.
+- **Don't add comments** unless the WHY is non-obvious. Identifiers self-document.
+- **Don't add backwards-compatibility shims** for code that isn't shipped yet.
+- **Don't use emojis in code output** unless explicitly asked.
+
+## Cost meter awareness
+
+Claude Code sessions cost real money. Approximate meter:
+
+- **Simple edit** — $0.02 – $0.10
+- **Feature via `/work-on`** — $0.15 – $0.60
+- **Adversarial review** — +$0.10 – $0.20 on top of `/review`
+- **Ralph loop overnight** — $5 – $40 depending on backlog size
+
+Set `COST_CEILING_SESSION_CENTS` in `.env` to auto-close sessions past a cap (if the agent runtime supports it).
