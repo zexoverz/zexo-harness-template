@@ -1,0 +1,4 @@
+- [Foru-Engineering org](foru_org.md) — GitHub org for FORU eng team. Created 2026-07-20. Members: Faisal (lead), Naufal, Toriq, Ariq. Arief + Kai advisory.
+- [Sprint context](sprint_current.md) — Coinfest Asia 2026 demo, "Project Zero" MVP, deadline 2026-08-07. Chat + voice, fake catalog, 4 wedges.
+- [Tech stack](stack.md) — Bun + Elysia + React 19 + Drizzle + oxlint/oxfmt. Playwright for E2E. Railway for deploy.
+- [Non-negotiables](rules.md) — Never skip hooks. Never commit secrets. Never `--force` to main. Always verify before ship. Every architectural choice → ADR.

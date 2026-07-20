@@ -1,0 +1,57 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build
+dist/
+build/
+out/
+.next/
+.vite/
+.turbo/
+
+# env & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+bun-debug.log*
+pnpm-debug.log*
+
+# coverage
+coverage/
+.nyc_output/
+
+# editor
+.vscode/
+.idea/
+.DS_Store
+
+# Claude Code local overrides (per-user, not shared)
+.claude/settings.local.json
+.claude/memory/*.md
+!.claude/memory/MEMORY.md
+!.claude/memory/*.example.md
+
+# Playwright + screenshots (unless intentionally committed under docs/)
+.playwright-mcp/
+test-results/
+playwright-report/
+playwright/.cache/
+*.png
+*.jpg
+*.jpeg
+!docs/**/*.png
+!docs/**/*.jpg
+
+# scratchpads
+scratch/
+tmp/
+.tmp/
