@@ -92,7 +92,8 @@ Expected: tools prefixed with `mcp__context7__`, `mcp__github__`, `mcp__playwrig
 Set the required env vars in `.env`:
 
 - `GITHUB_TOKEN` — a PAT with `repo` + `read:org` scope (create at https://github.com/settings/tokens)
-- `RAILWAY_TOKEN` — from https://railway.app/account/tokens (only if you'll deploy)
+- `GCP_PROJECT_ID` + `GCP_REGION` — set to Foru-Engineering GCP project. Ask Faisal for the project ID.
+- `gcloud auth application-default login` — one-time browser auth so `/deploy` can push to Cloud Run
 
 ## What each subagent is for
 

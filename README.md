@@ -22,7 +22,7 @@ This template collapses the setup dance into `./setup.sh`. Every sprint starts f
 | **RTK**              | Rust Token Killer pre-wired as PreToolUse Bash hook (60–90% token savings on dev commands)   |
 | **5 subagents**      | `planner`, `code-reviewer`, `tdd-guide`, `security-reviewer`, `build-error-resolver`         |
 | **5 slash commands** | `/ship`, `/work-on`, `/review`, `/deploy`, `/adr`                                            |
-| **MCP servers**      | Context7 (fresh docs), GitHub, Playwright, Railway — auto-loaded via `.mcp.json`             |
+| **MCP servers**      | Context7 (fresh docs), GitHub, Playwright — auto-loaded via `.mcp.json`. GCP via `gcloud` CLI + gcloud MCP if enabled. |
 | **Hooks**            | PostToolUse lint/fmt on edit, Stop-hook full verify at session end                           |
 | **AGENTS.md**        | Cross-tool rules (Cursor / Cline / Windsurf compat) — bring your own IDE                     |
 | **Memory scaffold**  | Pre-seeded FORU-org context so subagents know who they are                                   |

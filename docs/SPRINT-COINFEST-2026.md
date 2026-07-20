@@ -87,7 +87,7 @@ Suggested fake providers:
 | 1 | Agent runtime — **Hermes vs OpenClaw**           | Team     | Week 1 (Jul 28)    |
 | 2 | Chat channel — WhatsApp first, Telegram, or both | Team     | Week 1             |
 | 3 | Voice API — ElevenLabs, OpenAI Realtime, other   | Team     | Week 2 if we go for voice |
-| 4 | Deployment target — Railway, Cloud Run, VM       | Team     | Week 1             |
+| 4 | Deployment shape on GCP — Cloud Run (default) vs GKE vs Compute Engine | Team     | Week 1             |
 | 5 | LLM choice — Claude, GPT, Gemini, local          | Team     | Week 1             |
 
 Faisal's leaning is Hermes (per meeting notes — "OpenClaw team is moving away, security concerns"). Team confirms during Week 1.
@@ -116,7 +116,7 @@ Faisal's leaning is Hermes (per meeting notes — "OpenClaw team is moving away,
 - Practice demo runs offline
 - Optional: voice interface (if Week 2 slack allows)
 - Optional: animated blob (if voice works and time remains)
-- Deploy to Railway with public URL
+- Deploy to GCP Cloud Run (region `asia-southeast2` Jakarta) with public URL
 - Rehearse demo → record video
 
 ## Success criteria

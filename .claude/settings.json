@@ -42,6 +42,7 @@
       "Bash(gh *)",
       "Bash(git *)",
       "Bash(rtk *)",
+      "Bash(gcloud *)",
       "Bash(mkdir *)",
       "Bash(ls *)",
       "Bash(cat *)",
@@ -50,7 +51,6 @@
     ]
   },
   "enabledPlugins": {
-    "railway@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
     "figma@claude-plugins-official": true
   },

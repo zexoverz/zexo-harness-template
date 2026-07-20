@@ -100,10 +100,10 @@ Expect: scaffolds `docs/ADR/002-which-chat-channel-first.md`. Fill in Context / 
 ## 9. Deploy safely
 
 ```
-> /deploy railway
+> /deploy cloud-run
 ```
 
-Expect: 4 pre-flight checks → deploy → smoke test → log entry. Refuses if any check fails.
+Expect: 5 pre-flight checks → `gcloud run deploy` → smoke test → log entry. Refuses if any check fails. Region `asia-southeast2` (Jakarta) by default, secrets via Secret Manager (never `--set-env-vars`).
 
 ---
 

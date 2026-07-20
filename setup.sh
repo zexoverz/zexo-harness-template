@@ -73,7 +73,20 @@ else
 fi
 
 # ------------------------------------------------------
-# 4. ECC (Everything Claude Code) rules
+# 4. gcloud CLI (GCP deploy target)
+# ------------------------------------------------------
+if command -v gcloud >/dev/null 2>&1; then
+  if gcloud auth application-default print-access-token >/dev/null 2>&1; then
+    ok "gcloud authenticated (ADC)"
+  else
+    warn "gcloud installed but no application-default creds — run: gcloud auth application-default login"
+  fi
+else
+  warn "gcloud not found — install: brew install --cask google-cloud-sdk (macOS) or https://cloud.google.com/sdk/docs/install"
+fi
+
+# ------------------------------------------------------
+# 5. ECC (Everything Claude Code) rules
 # ------------------------------------------------------
 if [[ -d "${HOME}/.claude/rules/ecc" ]]; then
   ok "ECC rules present at ~/.claude/rules/ecc/"
