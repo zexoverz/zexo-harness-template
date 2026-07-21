@@ -1,5 +1,7 @@
 # zexo-harness-template
 
+**Current version:** `v0.2.0` — ECC integrated as git submodule, fully loading into every session ([changelog](./.claude-plugin/plugin.json))
+
 **A best-in-world personal harness for Claude Code development.** Fork it, run one command, and get a battle-tested `.claude/` setup — subagents, slash commands, MCP servers, hooks, memory scaffolding, code-review gates, and CI — all pre-wired.
 
 Built + maintained by [@zexoverz](https://github.com/zexoverz). Free to use, fork, and adapt.
@@ -36,15 +38,17 @@ This template collapses the dance into `./setup.sh`. Every repo starts from the 
 ```bash
 gh repo create <owner>/<my-new-project> --template zexoverz/zexo-harness-template --private
 cd <my-new-project>
-./setup.sh
+git submodule update --init --recursive   # pulls ECC
+./setup.sh                                 # or setup.sh handles it
 ```
 
 ### Option B — direct clone
 
 ```bash
-git clone https://github.com/zexoverz/zexo-harness-template.git my-new-project
+git clone --recurse-submodules https://github.com/zexoverz/zexo-harness-template.git my-new-project
 cd my-new-project
 rm -rf .git && git init -b main
+git submodule add https://github.com/affaan-m/ECC.git .claude/rules/ecc
 ./setup.sh
 ```
 
@@ -61,7 +65,7 @@ rm -rf .git && git init -b main
 - **RTK** installed from https://github.com/rtk-ai/rtk
 - **gh** authenticated
 - **gcloud** installed (only if you'll deploy to GCP)
-- **ECC rules** present at `~/.claude/rules/ecc/`
+- **ECC submodule initialized** at `.claude/rules/ecc/` (auto-pulled from [affaan-m/ECC](https://github.com/affaan-m/ECC), pinned SHA)
 - **`.env`** created from `.env.example`
 
 ## The 6 subagents
@@ -102,7 +106,7 @@ Grounded in field research (see [`docs/RESEARCH-NOTES.md`](./docs/RESEARCH-NOTES
 7. **Subdirectory CLAUDE.md convention** — scoped guidance beats a monolithic 500-line CLAUDE.md.
 8. **RTK + minimal MCP** — 60-90% token compression, 3-4 servers not 15. The field converged on "less is more."
 9. **Cross-tool AGENTS.md** — same rules whether you use Claude Code, Cursor, Cline, or Windsurf.
-10. **ECC upstream** — inherits [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) v2, selectively.
+10. **ECC vendored as git submodule** — [affaan-m/ECC](https://github.com/affaan-m/ECC) pinned by SHA at `.claude/rules/ecc/`. `CLAUDE.md` `@`-imports 15 rule files (10 common + 5 TypeScript). Every subagent references its governing ECC files explicitly. No global install required — clone and go.
 
 ## Not for you if
 

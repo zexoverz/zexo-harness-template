@@ -43,14 +43,23 @@ If `rtk gain` errors with "command not found," you likely have the WRONG rtk bin
 
 ## Step 3 — verify ECC
 
-ECC (Everything Claude Code) is a set of global rules loaded on every Claude Code session. It lives at `~/.claude/rules/ecc/`. Check:
+**As of v0.2.0, ECC is vendored as a git submodule in this repo** — no global install required. It lives at `.claude/rules/ecc/` and is pinned to a specific SHA of [affaan-m/ECC](https://github.com/affaan-m/ECC). `setup.sh` auto-initializes it.
+
+Verify:
 
 ```bash
-ls ~/.claude/rules/ecc/common/
-# Expected: agents.md coding-style.md code-review.md ... testing.md
+ls .claude/rules/ecc/rules/common/
+# Expected: agents.md code-review.md coding-style.md development-workflow.md \
+#           git-workflow.md hooks.md patterns.md performance.md security.md testing.md
 ```
 
-If missing, install from https://github.com/affaan-m/everything-claude-code.
+`CLAUDE.md` `@`-imports 15 ECC files (10 common + 5 TypeScript) on every session start, so ECC rules are always in Claude's context. Every subagent (`planner`, `code-reviewer`, `security-reviewer`, `tdd-guide`, `critic`, `build-error-resolver`) explicitly cites the ECC files that govern it.
+
+If the submodule directory is empty (fresh clone without `--recurse-submodules`), run:
+
+```bash
+git submodule update --init --recursive
+```
 
 ## Step 4 — open Claude Code
 
@@ -149,5 +158,5 @@ Set the required env vars in `.env`:
 
 - **Issues in the template itself:** https://github.com/zexoverz/zexo-harness-template/issues
 - **Claude Code docs:** https://code.claude.com/docs
-- **ECC (rules foundation):** https://github.com/affaan-m/everything-claude-code
+- **ECC (rules foundation):** https://github.com/affaan-m/ECC (vendored as submodule at `.claude/rules/ecc/`)
 - **RTK (token compression):** https://github.com/rtk-ai/rtk
