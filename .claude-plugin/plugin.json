@@ -1,7 +1,7 @@
 {
   "name": "zexo-harness",
-  "version": "0.1.0",
-  "description": "Best-in-world personal harness for Claude Code — subagents, skills, hooks, MCP servers all pre-wired. Field-researched (mid-2026).",
+  "version": "0.2.0",
+  "description": "Best-in-world personal harness for Claude Code — subagents, skills, hooks, MCP servers, ECC integration all pre-wired. Field-researched (mid-2026).",
   "author": {
     "name": "Faisal Firdani",
     "email": "faisalfirdani01@gmail.com",
@@ -47,6 +47,9 @@
     "hooks": [
       "post-edit-lint",
       "notify-when-done"
+    ],
+    "vendored": [
+      "ECC — affaan-m/ECC as git submodule at .claude/rules/ecc/"
     ]
   },
   "requires": {
@@ -56,5 +59,27 @@
       "gh",
       "rtk (https://github.com/rtk-ai/rtk)"
     ]
-  }
+  },
+  "changelog": [
+    {
+      "version": "0.2.0",
+      "date": "2026-07-21",
+      "changes": [
+        "ECC vendored as git submodule at .claude/rules/ecc/ (pinned SHA)",
+        "CLAUDE.md now @-imports 15 ECC rule files",
+        "All 6 subagents reference their governing ECC files explicitly",
+        "AGENTS.md trimmed — defers to ECC, only project-specific overrides remain",
+        "setup.sh auto-inits ECC submodule instead of warning about global install"
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "date": "2026-07-21",
+      "changes": [
+        "Initial scaffold — 6 subagents, 9 slash commands, MCP servers, hooks",
+        "Fable-researched additions: /verify-adversarial, /loop, /swarm, critic subagent, Chrome DevTools MCP",
+        "Plugin format for /plugin install distribution"
+      ]
+    }
+  ]
 }

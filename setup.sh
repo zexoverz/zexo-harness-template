@@ -76,13 +76,20 @@ else
 fi
 
 # ------------------------------------------------------
-# ECC (Everything Claude Code) rules
+# ECC (Everything Claude Code) — vendored as git submodule
 # ------------------------------------------------------
-if [[ -d "${HOME}/.claude/rules/ecc" ]]; then
-  ok "ECC rules present at ~/.claude/rules/ecc/"
+if [[ -f .gitmodules ]] && grep -q "ecc" .gitmodules 2>/dev/null; then
+  info "initializing ECC submodule at .claude/rules/ecc/"
+  git submodule update --init --recursive --depth 1 .claude/rules/ecc 2>&1 | tail -3
+  if [[ -f .claude/rules/ecc/rules/common/coding-style.md ]]; then
+    ecc_sha=$(cd .claude/rules/ecc && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    ok "ECC pinned to affaan-m/ECC@${ecc_sha}"
+  else
+    warn "ECC submodule init incomplete — rerun: git submodule update --init --recursive"
+  fi
 else
-  warn "ECC rules not found at ~/.claude/rules/ecc/"
-  warn "  install ECC from: https://github.com/affaan-m/everything-claude-code"
+  warn "no ECC submodule declared — CLAUDE.md @-imports will fail"
+  warn "  run: git submodule add https://github.com/affaan-m/ECC.git .claude/rules/ecc"
 fi
 
 # ------------------------------------------------------

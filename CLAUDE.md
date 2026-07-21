@@ -4,6 +4,26 @@
 
 Keep this file under **200 lines**. If it grows past that, run `/prune-claude-md` — move enforceable rules into hooks, scoped guidance into subdirectory `CLAUDE.md` files.
 
+## ECC (Everything Claude Code) — base rules
+
+The following rules from [affaan-m/ECC](https://github.com/affaan-m/ECC) (vendored at `.claude/rules/ecc/`, pinned by git submodule) govern this repo. Anything in this file below overrides or extends them; anything omitted here defers to ECC.
+
+@.claude/rules/ecc/rules/common/coding-style.md
+@.claude/rules/ecc/rules/common/testing.md
+@.claude/rules/ecc/rules/common/security.md
+@.claude/rules/ecc/rules/common/code-review.md
+@.claude/rules/ecc/rules/common/git-workflow.md
+@.claude/rules/ecc/rules/common/agents.md
+@.claude/rules/ecc/rules/common/hooks.md
+@.claude/rules/ecc/rules/common/patterns.md
+@.claude/rules/ecc/rules/common/performance.md
+@.claude/rules/ecc/rules/common/development-workflow.md
+@.claude/rules/ecc/rules/typescript/coding-style.md
+@.claude/rules/ecc/rules/typescript/testing.md
+@.claude/rules/ecc/rules/typescript/security.md
+@.claude/rules/ecc/rules/typescript/hooks.md
+@.claude/rules/ecc/rules/typescript/patterns.md
+
 ## Project scope
 
 **Replace this section per project.** Placeholder shape:
