@@ -4,9 +4,18 @@
 
 Keep this file under **200 lines**. If it grows past that, run `/prune-claude-md` — move enforceable rules into hooks, scoped guidance into subdirectory `CLAUDE.md` files.
 
-## ECC (Everything Claude Code) — base rules
+## ECC (Everything Claude Code) — REQUIRED plugin + rules
 
-The following rules from [affaan-m/ECC](https://github.com/affaan-m/ECC) are vendored at `.claude/rules/ecc/rules/` (15 files copied from upstream; pinned SHA in `VERSION.md`; refresh via `./.claude/rules/ecc/update.sh`). They govern this repo. Anything in this file below overrides or extends them; anything omitted here defers to ECC.
+**Required plugin:** [`affaan-m/ECC`](https://github.com/affaan-m/ECC) plugin `ecc@ecc` must be installed on your Claude Code before working in this repo. Install once, one-time (see [`docs/ONBOARDING.md`](./docs/ONBOARDING.md#step-4-install-the-ecc-plugin) Step 4):
+
+```
+/plugin marketplace add affaan-m/ECC
+/plugin install ecc@ecc
+```
+
+The plugin ships **67 subagents, 278 skills, 94 slash commands** — most importantly `/coding-standards`, `/security-audit`, `/tdd-cycle`, and the rest of ECC's operator surface. `.claude/settings.json` lists `ecc@ecc` under `enabledPlugins` so Claude Code will refuse to start clean without it.
+
+**Vendored rules for @-imports:** the 15 rule files below are also copied at `.claude/rules/ecc/rules/` (pinned SHA in `VERSION.md`; refresh via `./.claude/rules/ecc/update.sh`). These drive the `@`-imports that keep ECC rules always-on in every session's context, even when a specific skill isn't invoked.
 
 @.claude/rules/ecc/rules/common/coding-style.md
 @.claude/rules/ecc/rules/common/testing.md

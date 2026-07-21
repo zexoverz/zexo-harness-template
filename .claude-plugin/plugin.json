@@ -1,7 +1,7 @@
 {
   "name": "zexo-harness",
-  "version": "0.3.0",
-  "description": "Best-in-world personal harness for Claude Code — subagents, skills, hooks, MCP servers, ECC integration all pre-wired. Field-researched (mid-2026).",
+  "version": "0.4.0",
+  "description": "Best-in-world personal harness for Claude Code — subagents, skills, hooks, MCP servers, ECC integration (plugin + vendored rules) all pre-wired. Field-researched (mid-2026).",
   "author": {
     "name": "Faisal Firdani",
     "email": "faisalfirdani01@gmail.com",
@@ -61,6 +61,18 @@
     ]
   },
   "changelog": [
+    {
+      "version": "0.4.0",
+      "date": "2026-07-21",
+      "changes": [
+        "ECC plugin (ecc@ecc from affaan-m/ECC) is now REQUIRED, not optional — declared in .claude/settings.json under enabledPlugins",
+        "setup.sh prints a required-install banner at end (can't install plugins from shell — user runs /plugin commands once in Claude Code)",
+        "CLAUDE.md + AGENTS.md rewritten — 'REQUIRED plugin' section instead of 'optional' language",
+        "README quickstart shows the /plugin install commands as post-setup.sh required step",
+        "ONBOARDING gets a dedicated Step 4 for plugin install",
+        "Vendored 15 rule files stay (drive @-imports for always-on context); plugin is additive for /coding-standards + 278 more skills"
+      ]
+    },
     {
       "version": "0.3.0",
       "date": "2026-07-21",

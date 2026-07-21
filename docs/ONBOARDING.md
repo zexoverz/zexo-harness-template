@@ -62,21 +62,39 @@ Pinned upstream SHA is in `.claude/rules/ecc/VERSION.md`. `CLAUDE.md` `@`-import
 git diff .claude/rules/ecc/rules/   # review before committing
 ```
 
-**Optional — install the full ECC plugin globally** (for the 278 skills + 94 slash commands, which are additive to the vendored rules):
+## Step 4 — install the ECC plugin (REQUIRED, one-time)
 
-```bash
-# In any Claude Code session, one time:
-/plugin marketplace add affaan-m/ECC
-/plugin install ecc@ecc
-```
+The vendored rules cover `@`-imports, but the harness also needs ECC's 67 subagents + 278 skills + 94 commands installed globally in Claude Code. `.claude/settings.json` declares `ecc@ecc` under `enabledPlugins`, so Claude Code will refuse to start clean if it's missing.
 
-The plugin is installed at the user level and doesn't touch this repo — vendored rules remain authoritative for rule application, plugin adds skills + commands on top.
-
-## Step 4 — open Claude Code
+Open Claude Code:
 
 ```bash
 claude
 ```
+
+Then run **exactly these two commands** at the prompt:
+
+```
+/plugin marketplace add affaan-m/ECC
+/plugin install ecc@ecc
+```
+
+You'll see confirmation output showing the plugin loaded — that includes commands like `/coding-standards`, `/security-audit`, `/tdd-cycle`, etc. Restart the Claude Code session once so the plugin registers cleanly.
+
+Now the harness is fully wired. Every future Claude Code session (in any repo cloned from `zexo-harness-template` or any child template like `project-zero-demo`) auto-loads ECC's plugin — you never install it again.
+
+## Step 5 — try a slash command
+
+Try `/adr example-decision` — this scaffolds a new ADR. Confirm the file appears in `docs/ADR/`.
+
+You can also try one of ECC's plugin-provided commands:
+
+```
+/coding-standards
+/tdd-cycle
+```
+
+If these work, the ECC plugin is loaded correctly.
 
 Try:
 
@@ -85,10 +103,6 @@ Try:
 ```
 
 Claude reads `CLAUDE.md` automatically. It should tell you the project goals.
-
-## Step 5 — use a slash command
-
-Try `/adr example-decision` — this scaffolds a new ADR. Confirm the file appears in `docs/ADR/`.
 
 ## Step 6 — use a subagent
 

@@ -76,21 +76,35 @@ else
 fi
 
 # ------------------------------------------------------
-# ECC (Everything Claude Code) — vendored SUBSET (15 rule files)
+# ECC (Everything Claude Code)
+# Two layers:
+#   1. VENDORED rules (15 files, ~30KB) — drives @-imports in CLAUDE.md
+#   2. REQUIRED plugin (ecc@ecc from affaan-m/ECC marketplace) — 67 agents, 278 skills, 94 commands
+# The full ECC repo is a multi-tool distribution; cloning it wholesale blows
+# Claude Code's memory-file scan past its context limit (~5.8M tokens).
 # ------------------------------------------------------
-# Full ECC is 67 agents + 278 skills + 94 commands + i18n docs + multi-tool
-# bundles — cloning the whole repo blows Claude Code's memory-file scan
-# past its context limit (~5.8M tokens). We vendor only the 15 rule files
-# CLAUDE.md and the subagents actually cite (~30KB).
 if [[ -f .claude/rules/ecc/rules/common/coding-style.md ]]; then
   file_count=$(find .claude/rules/ecc/rules -type f -name "*.md" | wc -l | tr -d ' ')
-  ok "ECC vendored subset present (${file_count} rule files, ~30KB)"
-  info "  full plugin (278 skills + 94 commands) is optional — install via:"
-  info "  /plugin marketplace add affaan-m/ECC && /plugin install ecc@ecc"
+  ok "ECC vendored rules present (${file_count} files, ~30KB)"
 else
   warn "ECC vendored rules missing at .claude/rules/ecc/rules/"
   warn "  run: ./.claude/rules/ecc/update.sh"
 fi
+
+# ecc@ecc plugin is REQUIRED. .claude/settings.json declares it under
+# enabledPlugins so Claude Code will report it missing on session start.
+# We can't install it from shell (plugin install is a Claude Code /command),
+# but we can loudly remind the user to do it once.
+echo ""
+echo "${y}⚠ REQUIRED: install the ecc@ecc plugin in Claude Code (one-time).${d}"
+echo "   When you open Claude Code the first time, run these two commands:"
+echo ""
+echo "     /plugin marketplace add affaan-m/ECC"
+echo "     /plugin install ecc@ecc"
+echo ""
+echo "   This ships ECC's 67 subagents + 278 skills + 94 commands globally."
+echo "   Skipping this leaves the harness half-configured."
+echo ""
 
 # ------------------------------------------------------
 # .env

@@ -4,9 +4,20 @@
 
 Bring your preferred IDE — this file guarantees consistent behavior. Claude Code additionally reads `CLAUDE.md` (superset).
 
-## Base rules — ECC (Everything Claude Code)
+## Base rules — ECC (Everything Claude Code) — REQUIRED
 
-Coding style, testing, security, code review, git workflow, and agent orchestration all defer to **ECC** (15 rule files vendored at `.claude/rules/ecc/rules/` from [affaan-m/ECC](https://github.com/affaan-m/ECC); pinned SHA in `.claude/rules/ecc/VERSION.md`).
+Coding style, testing, security, code review, git workflow, and agent orchestration all defer to **ECC** ([`affaan-m/ECC`](https://github.com/affaan-m/ECC)).
+
+**Required in Claude Code:** install the `ecc@ecc` plugin — one-time:
+
+```
+/plugin marketplace add affaan-m/ECC
+/plugin install ecc@ecc
+```
+
+Ships 67 subagents, 278 skills, 94 slash commands (`/coding-standards`, `/security-audit`, `/tdd-cycle`, etc). Also declared in `.claude/settings.json` under `enabledPlugins`.
+
+**For cross-tool teammates** (Cursor / Cline / Windsurf / Aider): the same 15 rule files are vendored at `.claude/rules/ecc/rules/`. Manually read them before working in this repo:
 
 Tools that support `@`-imports (Claude Code) load ECC directly from `CLAUDE.md`. Tools that don't should manually read these files before working in this repo:
 
