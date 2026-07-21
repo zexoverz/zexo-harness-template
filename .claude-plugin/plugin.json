@@ -1,6 +1,6 @@
 {
   "name": "zexo-harness",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Best-in-world personal harness for Claude Code — subagents, skills, hooks, MCP servers, ECC integration all pre-wired. Field-researched (mid-2026).",
   "author": {
     "name": "Faisal Firdani",
@@ -49,7 +49,7 @@
       "notify-when-done"
     ],
     "vendored": [
-      "ECC — affaan-m/ECC as git submodule at .claude/rules/ecc/"
+      "ECC — 15 rule files vendored from affaan-m/ECC at .claude/rules/ecc/rules/ (see VERSION.md for pinned SHA)"
     ]
   },
   "requires": {
@@ -62,11 +62,24 @@
   },
   "changelog": [
     {
+      "version": "0.3.0",
+      "date": "2026-07-21",
+      "changes": [
+        "BREAKING: replaced ECC git submodule with vendored 15-file subset (fixes 5.8M-token context bomb — full ECC repo pulls 2226 files including 8 IDE bundles + i18n docs that Claude Code auto-scans as memory)",
+        "Added .claude/rules/ecc/VERSION.md tracking upstream SHA + fetch date",
+        "Added .claude/rules/ecc/update.sh to re-fetch just the rule files from upstream",
+        "setup.sh no longer inits submodule; verifies vendored subset presence + suggests optional /plugin install for the full ECC skill set",
+        "CLAUDE.md @-imports unchanged (paths still resolve to the vendored files)",
+        "All 6 subagent references to ECC files unchanged (same paths)",
+        ".gitmodules removed"
+      ]
+    },
+    {
       "version": "0.2.0",
       "date": "2026-07-21",
       "changes": [
-        "ECC vendored as git submodule at .claude/rules/ecc/ (pinned SHA)",
-        "CLAUDE.md now @-imports 15 ECC rule files",
+        "ECC vendored as git submodule at .claude/rules/ecc/ (pinned SHA) — SUPERSEDED by 0.3.0 due to context blow-up",
+        "CLAUDE.md @-imports 15 ECC rule files",
         "All 6 subagents reference their governing ECC files explicitly",
         "AGENTS.md trimmed — defers to ECC, only project-specific overrides remain",
         "setup.sh auto-inits ECC submodule instead of warning about global install"

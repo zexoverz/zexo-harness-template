@@ -1,3 +1,0 @@
-[submodule ".claude/rules/ecc"]
-	path = .claude/rules/ecc
-	url = https://github.com/affaan-m/ECC.git

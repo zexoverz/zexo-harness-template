@@ -6,7 +6,7 @@ Keep this file under **200 lines**. If it grows past that, run `/prune-claude-md
 
 ## ECC (Everything Claude Code) — base rules
 
-The following rules from [affaan-m/ECC](https://github.com/affaan-m/ECC) (vendored at `.claude/rules/ecc/`, pinned by git submodule) govern this repo. Anything in this file below overrides or extends them; anything omitted here defers to ECC.
+The following rules from [affaan-m/ECC](https://github.com/affaan-m/ECC) are vendored at `.claude/rules/ecc/rules/` (15 files copied from upstream; pinned SHA in `VERSION.md`; refresh via `./.claude/rules/ecc/update.sh`). They govern this repo. Anything in this file below overrides or extends them; anything omitted here defers to ECC.
 
 @.claude/rules/ecc/rules/common/coding-style.md
 @.claude/rules/ecc/rules/common/testing.md

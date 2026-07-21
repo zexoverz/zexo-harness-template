@@ -43,7 +43,7 @@ If `rtk gain` errors with "command not found," you likely have the WRONG rtk bin
 
 ## Step 3 — verify ECC
 
-**As of v0.2.0, ECC is vendored as a git submodule in this repo** — no global install required. It lives at `.claude/rules/ecc/` and is pinned to a specific SHA of [affaan-m/ECC](https://github.com/affaan-m/ECC). `setup.sh` auto-initializes it.
+**As of v0.3.0, ECC is vendored as a 15-file subset** at `.claude/rules/ecc/rules/` — the full ECC v2 repo is a multi-tool distribution (67 agents, 278 skills, 8 IDE bundles, i18n docs — ~2200 files) that blows Claude Code's context past its 1M limit if cloned wholesale. We copy only the rule files we cite.
 
 Verify:
 
@@ -53,13 +53,24 @@ ls .claude/rules/ecc/rules/common/
 #           git-workflow.md hooks.md patterns.md performance.md security.md testing.md
 ```
 
-`CLAUDE.md` `@`-imports 15 ECC files (10 common + 5 TypeScript) on every session start, so ECC rules are always in Claude's context. Every subagent (`planner`, `code-reviewer`, `security-reviewer`, `tdd-guide`, `critic`, `build-error-resolver`) explicitly cites the ECC files that govern it.
+Pinned upstream SHA is in `.claude/rules/ecc/VERSION.md`. `CLAUDE.md` `@`-imports 15 rule files (10 common + 5 TypeScript) on every session start. Every subagent (`planner`, `code-reviewer`, `security-reviewer`, `tdd-guide`, `critic`, `build-error-resolver`) explicitly cites the ECC files that govern it.
 
-If the submodule directory is empty (fresh clone without `--recurse-submodules`), run:
+**To refresh the vendored files from upstream:**
 
 ```bash
-git submodule update --init --recursive
+./.claude/rules/ecc/update.sh
+git diff .claude/rules/ecc/rules/   # review before committing
 ```
+
+**Optional — install the full ECC plugin globally** (for the 278 skills + 94 slash commands, which are additive to the vendored rules):
+
+```bash
+# In any Claude Code session, one time:
+/plugin marketplace add affaan-m/ECC
+/plugin install ecc@ecc
+```
+
+The plugin is installed at the user level and doesn't touch this repo — vendored rules remain authoritative for rule application, plugin adds skills + commands on top.
 
 ## Step 4 — open Claude Code
 
@@ -158,5 +169,5 @@ Set the required env vars in `.env`:
 
 - **Issues in the template itself:** https://github.com/zexoverz/zexo-harness-template/issues
 - **Claude Code docs:** https://code.claude.com/docs
-- **ECC (rules foundation):** https://github.com/affaan-m/ECC (vendored as submodule at `.claude/rules/ecc/`)
+- **ECC (rules foundation):** https://github.com/affaan-m/ECC (15 rule files vendored at `.claude/rules/ecc/rules/`, pinned SHA in `VERSION.md`)
 - **RTK (token compression):** https://github.com/rtk-ai/rtk

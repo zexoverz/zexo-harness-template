@@ -6,7 +6,7 @@ Bring your preferred IDE — this file guarantees consistent behavior. Claude Co
 
 ## Base rules — ECC (Everything Claude Code)
 
-Coding style, testing, security, code review, git workflow, and agent orchestration all defer to **ECC** (vendored at `.claude/rules/ecc/`, pinned by git submodule to [affaan-m/ECC](https://github.com/affaan-m/ECC)).
+Coding style, testing, security, code review, git workflow, and agent orchestration all defer to **ECC** (15 rule files vendored at `.claude/rules/ecc/rules/` from [affaan-m/ECC](https://github.com/affaan-m/ECC); pinned SHA in `.claude/rules/ecc/VERSION.md`).
 
 Tools that support `@`-imports (Claude Code) load ECC directly from `CLAUDE.md`. Tools that don't should manually read these files before working in this repo:
 

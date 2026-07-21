@@ -76,20 +76,20 @@ else
 fi
 
 # ------------------------------------------------------
-# ECC (Everything Claude Code) — vendored as git submodule
+# ECC (Everything Claude Code) — vendored SUBSET (15 rule files)
 # ------------------------------------------------------
-if [[ -f .gitmodules ]] && grep -q "ecc" .gitmodules 2>/dev/null; then
-  info "initializing ECC submodule at .claude/rules/ecc/"
-  git submodule update --init --recursive --depth 1 .claude/rules/ecc 2>&1 | tail -3
-  if [[ -f .claude/rules/ecc/rules/common/coding-style.md ]]; then
-    ecc_sha=$(cd .claude/rules/ecc && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-    ok "ECC pinned to affaan-m/ECC@${ecc_sha}"
-  else
-    warn "ECC submodule init incomplete — rerun: git submodule update --init --recursive"
-  fi
+# Full ECC is 67 agents + 278 skills + 94 commands + i18n docs + multi-tool
+# bundles — cloning the whole repo blows Claude Code's memory-file scan
+# past its context limit (~5.8M tokens). We vendor only the 15 rule files
+# CLAUDE.md and the subagents actually cite (~30KB).
+if [[ -f .claude/rules/ecc/rules/common/coding-style.md ]]; then
+  file_count=$(find .claude/rules/ecc/rules -type f -name "*.md" | wc -l | tr -d ' ')
+  ok "ECC vendored subset present (${file_count} rule files, ~30KB)"
+  info "  full plugin (278 skills + 94 commands) is optional — install via:"
+  info "  /plugin marketplace add affaan-m/ECC && /plugin install ecc@ecc"
 else
-  warn "no ECC submodule declared — CLAUDE.md @-imports will fail"
-  warn "  run: git submodule add https://github.com/affaan-m/ECC.git .claude/rules/ecc"
+  warn "ECC vendored rules missing at .claude/rules/ecc/rules/"
+  warn "  run: ./.claude/rules/ecc/update.sh"
 fi
 
 # ------------------------------------------------------
