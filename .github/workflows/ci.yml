@@ -10,7 +10,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      has_code: ${{ steps.check.outputs.has_code }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        name: Detect if repo has a codebase yet
+        # The template itself ships no package.json — cloned/child repos add it.
+        # Skip verify cleanly on the template so its CI stays green.
+        run: |
+          if [ -f package.json ]; then
+            echo "has_code=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_code=false" >> $GITHUB_OUTPUT
+            echo "::notice::No package.json yet — CI stays green until code lands"
+          fi
+
   verify:
+    needs: detect
+    if: needs.detect.outputs.has_code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
