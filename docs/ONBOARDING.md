@@ -43,7 +43,10 @@ If `rtk gain` errors with "command not found," you likely have the WRONG rtk bin
 
 ## Step 3 — verify ECC
 
-**As of v0.3.0, ECC is vendored as a 15-file subset** at `.claude/rules/ecc/rules/` — the full ECC v2 repo is a multi-tool distribution (67 agents, 278 skills, 8 IDE bundles, i18n docs — ~2200 files) that blows Claude Code's context past its 1M limit if cloned wholesale. We copy only the rule files we cite.
+ECC has **two layers** in this harness:
+
+1. **Vendored rules** (this step) — 15 files at `.claude/rules/ecc/rules/` drive the `@`-imports in `CLAUDE.md`, so ECC rules are always in Claude's context. Kept as vendored copies (not submodule / not full clone) because ECC v2 is a full multi-tool distribution (~2200 files across i18n docs + 8 IDE bundles); cloning it wholesale blows Claude Code's memory-file scan past its 1M limit.
+2. **Plugin `ecc@ecc`** — Step 4 below. Ships 67 subagents + 278 skills + 94 commands globally. Required.
 
 Verify:
 
